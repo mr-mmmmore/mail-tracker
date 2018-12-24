@@ -83,7 +83,7 @@ class MailTracker implements \Swift_Events_SendListener
         $this->hash = $hash;
 
         $html = preg_replace_callback(
-            "/(<a[^>]*href=['\"])([^'\"]*)/",
+            "/(<a[^>]*href=['\"])(?!mailto)([^'\"]*)/",
                 [$this, 'inject_link_callback'],
                 $html
         );
