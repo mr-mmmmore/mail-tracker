@@ -3,6 +3,7 @@
 namespace jdavidbakr\MailTracker;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Response;
 use Event;
 
@@ -40,6 +41,12 @@ class MailTrackerController extends Controller
     public function getL($url, $hash)
     {
         $url = base64_decode(str_replace("$", "/", $url));
+
+        if (filter_var($url, FILTER_VALIDATE_URL) === false) {
+            Log::warning('MailTrackerController::getL - the url to redirect to is not valid', ['currentUrl' => request()->url()]);
+            return redirect('/');
+        }
+
         $tracker = Model\SentEmail::where('hash', $hash)
             ->first();
         if ($tracker) {
