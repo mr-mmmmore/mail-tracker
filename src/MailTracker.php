@@ -171,7 +171,11 @@ class MailTracker implements \Swift_Events_SendListener
                     Event::fire(new EmailSentEvent($tracker));
                 }
                 catch(\Exception $e) {
-                    Log::error('MailTracker::createTrackers - the sent email could not be stored in the database', [$e]);
+                    $logger = new \Monolog\Logger('mailtracker');
+                    $logger->pushHandler(
+                        new \Monolog\Handler\RotatingFileHandler(storage_path('logs/mailtracker/mailtracker.log'),
+                            30, \Monolog\Logger::ERROR, false));
+                    $logger->error('MailTracker::createTrackers - the sent email could not be stored in the database', [$e]);
                 }
             }
         }

@@ -43,7 +43,11 @@ class MailTrackerController extends Controller
         $url = base64_decode(str_replace("$", "/", $url));
 
         if (filter_var($url, FILTER_VALIDATE_URL) === false) {
-            Log::warning('MailTrackerController::getL - the url to redirect to is not valid', ['currentUrl' => request()->url()]);
+            $logger = new \Monolog\Logger('mailtracker');
+            $logger->pushHandler(
+                new \Monolog\Handler\RotatingFileHandler(storage_path('logs/mailtracker/mailtracker.log'),
+                    30, \Monolog\Logger::WARNING, false));
+            $logger->warning('MailTrackerController::getL - the url to redirect to is not valid', ['currentUrl' => request()->url()]);
             return redirect('/');
         }
 
